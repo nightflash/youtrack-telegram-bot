@@ -1,0 +1,24 @@
+{
+  "name": "youtrack-telegram-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nightflash/youtrack-telegram-bot.git"
+  },
+  "author": "Maxim Erekhinskiy <max.erekhinskiy@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nightflash/youtrack-telegram-bot/issues"
+  },
+  "homepage": "https://github.com/nightflash/youtrack-telegram-bot#readme",
+  "dependencies": {
+    "node-persist": "^2.1.0",
+    "node-telegram-bot-api": "^0.30.0"
+  }
+}
