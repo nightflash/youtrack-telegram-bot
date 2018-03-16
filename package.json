@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/nightflash/youtrack-telegram-bot#readme",
   "dependencies": {
-    "node-persist": "^2.1.0",
     "node-telegram-bot-api": "^0.30.0"
   }
 }

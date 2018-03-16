@@ -1,40 +1,59 @@
+const fs = require('fs');
+
 class Storage {
-  constructor(setter, getter) {
-    this.setter = setter;
-    this.getter = getter;
+  constructor (config = {}) {
+    this.data = new Map();
+    this.dirtyOperations = 0;
+    this.persistLock = false;
+    this.config = {
+      storageFile: 'storage.txt',
+      ...config
+    }
   }
 
-  async getUserConfig(id) {
-    const config = await this.getter(id);
-
-    return JSON.parse(config) || {servers: []};
+  get dirty() {
+    return this.dirtyOperations > 0;
   }
 
-  async setUserConfig(id, config) {
-    return await this.setter(id, JSON.stringify(config));
+  setItem(key, value) {
+    this.data.set(key.toString(), value);
+    this.dirtyOperations++;
+
+    this.persist();
   }
 
-  async addServer(id, url, permanentToken) {
-    const config = await this.getUserConfig(id);
+  getItem(key) {
+    return this.data.get(key.toString());
+  }
 
-    if (config.servers.some(s => s.url === url)) {
-      return new Error(`Server ${url} already exists in your list`);
+  restore() {
+    return new Promise(resolve => {
+      fs.readFile(this.config.storageFile, (err, data) => {
+        if (!err) {
+          this.data = new Map(JSON.parse(data));
+        }
+
+        resolve();
+      })
+    });
+  }
+
+  persist() {
+    if (this.persistLock) {
+      console.log('Persisting already in progress');
+      return;
     }
 
-    console.log(id, url, permanentToken, config);
+    this.persistLock = true;
 
-    config.servers.push({
-      url,
-      permanentToken
+    fs.writeFile(this.config.storageFile, JSON.stringify([...this.data]), err => {
+      if(err) {
+        return console.error(err);
+      }
+
+      this.persistLock = false;
+      console.log("The file was saved!");
     });
-
-    this.setUserConfig(id, config);
-  }
-
-  async listServers(id) {
-    const config = await this.getUserConfig(id);
-
-    return config.servers;
   }
 }
 
